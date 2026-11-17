@@ -23,7 +23,6 @@ async def test_tools_are_read_only(client: Client[Any]) -> None:
     hints = {t.name: bool(t.annotations and t.annotations.read_only_hint) for t in await client.list_tools()}
 
     assert hints == {
-        "compare_by_barcode": True,
         "get_price_history": True,
         "get_top_discounts": True,
         "list_retailers_and_categories": True,
@@ -41,6 +40,24 @@ async def test_tools_answer_from_local_database(client: Client[Any]) -> None:
     assert [p["name"] for p in search.structured_content["items"]] == ["Maslac 82% Pilos 250g"]
     assert basket.structured_content is not None
     assert basket.structured_content["result"][0]["total"] == 459.98
+
+
+@pytest.mark.usefixtures("sample")
+async def test_search_by_barcode_compares_the_product_across_store_formats(client: Client[Any]) -> None:
+    by_name = await client.call_tool("search_products", {"query": ["lurpak"]})
+    by_barcode = await client.call_tool("search_products", {"ean": "8600000000101", "retail_chains": ["Maxi"]})
+
+    assert by_name.structured_content is not None
+    assert {p["diff_rsd"] for p in by_name.structured_content["items"]} == {None}
+    assert by_barcode.structured_content is not None
+    assert [(p["store_formats"], p["diff_rsd"]) for p in by_barcode.structured_content["items"]] == [
+        (["Mega Maxi"], 0.0), (["Maxi"], 20.0)
+    ]
+
+
+async def test_search_needs_query_or_barcode(client: Client[Any]) -> None:
+    with pytest.raises(Exception, match="query or ean"):
+        await client.call_tool("search_products", {})
 
 
 async def test_tools_ask_to_retry_while_first_download_runs(client: Client[Any]) -> None:

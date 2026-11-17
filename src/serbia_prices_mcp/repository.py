@@ -7,14 +7,13 @@ import duckdb
 
 from serbia_prices_mcp.normalize import normalize_text
 from serbia_prices_mcp.schemas import (
-    BarcodeOffer,
     BasketItem,
     BasketOption,
     Catalog,
     Discount,
     HistoryPoint,
+    Offer,
     Page,
-    ProductPrice,
     RetailerInfo,
 )
 
@@ -62,8 +61,11 @@ ORDER BY relevant DESC, price, retailer, name, ean
 """
 
 COMPARE_SQL = f"""
-WITH grouped AS (
-    SELECT {PRODUCT_COLUMNS}, {STORE_FORMATS} FROM prices WHERE snapshot = 'current' AND ean = $ean GROUP BY ALL
+WITH matched AS (
+    SELECT p.* FROM prices p JOIN retailers r ON r.key = p.retailer
+    WHERE p.snapshot = 'current' AND p.ean = $ean AND {CHAIN_FILTER}
+), grouped AS (
+    SELECT {PRODUCT_COLUMNS}, {STORE_FORMATS} FROM matched GROUP BY ALL
 )
 SELECT *,
        round(price - min(price) OVER (), 2) AS diff_rsd,
@@ -200,15 +202,18 @@ class PriceRepository:
         category: str | None = None,
         limit: int = 20,
         offset: int = 0,
-    ) -> Page[ProductPrice]:
+    ) -> Page[Offer]:
         variants = query_tokens(queries)
         if not variants:
-            return Page[ProductPrice](items=[], total=0, limit=limit, offset=offset)
+            return Page[Offer](items=[], total=0, limit=limit, offset=offset)
         params = {"variants": variants, "chains": chain_names(chains), "category": normalize_text(category) or None}
-        return Page[ProductPrice].model_validate(self.page(SEARCH_SQL, params, limit, offset))
+        return Page[Offer].model_validate(self.page(SEARCH_SQL, params, limit, offset))
 
-    def compare_by_barcode(self, ean: str, limit: int = 20, offset: int = 0) -> Page[BarcodeOffer]:
-        return Page[BarcodeOffer].model_validate(self.page(COMPARE_SQL, {"ean": ean.strip()}, limit, offset))
+    def compare_by_barcode(
+        self, ean: str, chains: Sequence[str] | None = None, limit: int = 20, offset: int = 0
+    ) -> Page[Offer]:
+        params = {"ean": ean.strip(), "chains": chain_names(chains)}
+        return Page[Offer].model_validate(self.page(COMPARE_SQL, params, limit, offset))
 
     def price_history(
         self, ean: str, chains: Sequence[str] | None = None, limit: int = 20, offset: int = 0

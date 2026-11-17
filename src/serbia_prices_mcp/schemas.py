@@ -4,8 +4,8 @@ from typing import Annotated, Generic, Literal, TypeVar
 from pydantic import BaseModel, Field
 
 Query = Annotated[
-    list[str],
-    Field(min_length=1, description="Serbian Latin product name plus optional synonyms, e.g. ['pileci file']."),
+    list[str] | None,
+    Field(description="Serbian Latin product name plus optional synonyms, e.g. ['pileci file']. Not needed with ean."),
 ]
 Chains = Annotated[
     list[str] | None,
@@ -15,6 +15,10 @@ Category = Annotated[str | None, Field(description="Optional category name or nu
 Limit = Annotated[int, Field(ge=1, le=100, description="Page size.")]
 Offset = Annotated[int, Field(ge=0, description="Number of results to skip.")]
 Ean = Annotated[str, Field(description="EAN barcode from search results.")]
+EanFilter = Annotated[
+    str | None,
+    Field(description="EAN barcode from earlier results: compare this exact product across all chains and formats."),
+]
 DiscountPct = Annotated[float, Field(ge=0, le=100)]
 
 
@@ -41,9 +45,9 @@ class ProductPrice(BaseModel):
     price_date: dt.date
 
 
-class BarcodeOffer(ProductPrice):
-    diff_rsd: float
-    diff_pct: float
+class Offer(ProductPrice):
+    diff_rsd: float | None = None
+    diff_pct: float | None = None
 
 
 class Discount(ProductPrice):

@@ -71,6 +71,9 @@ def test_compare_by_barcode_cleans_quotes_nul_and_zero_promo(repository: PriceRe
     ]
     assert offers[2].name == "MASLAC LURPAK 82% 250G"
     assert offers[2].category == "ULJA I MASTI"
+    assert [o.retailer for o in repository.compare_by_barcode("8600000000101", chains=["univerexport"]).items] == [
+        "univerexport"
+    ]
 
 
 @pytest.mark.usefixtures("sample")

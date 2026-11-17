@@ -3,11 +3,11 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, suppress
 
 from fastmcp import FastMCP
+from fastmcp.exceptions import ToolError
 from mcp_types import ToolAnnotations
 
 from serbia_prices_mcp.repository import PriceRepository
 from serbia_prices_mcp.schemas import (
-    BarcodeOffer,
     BasketItems,
     BasketOption,
     Catalog,
@@ -16,11 +16,12 @@ from serbia_prices_mcp.schemas import (
     Discount,
     DiscountPct,
     Ean,
+    EanFilter,
     HistoryPoint,
     Limit,
+    Offer,
     Offset,
     Page,
-    ProductPrice,
     Query,
 )
 from serbia_prices_mcp.sync import PriceSync
@@ -58,25 +59,25 @@ def build_server(repository: PriceRepository, sync: PriceSync) -> FastMCP:
             "Search current product prices across Serbian chains. Pass the product name in Serbian Latin "
             "(translate from Russian/English first) and optionally synonyms as extra list items. "
             "Most relevant names first, then the cheapest shelf price (price of the package as sold). "
-            "If nothing is found, retry with a synonym or a more general word."
+            "If nothing is found, retry with a synonym or a more general word. "
+            "Pass ean instead of query to compare one exact product across all chains and store formats: "
+            "results are sorted by price, diff_rsd and diff_pct show the difference from the cheapest."
         ),
         annotations=READ_ONLY,
     )
     def search_products(
-        query: Query,
+        query: Query = None,
+        ean: EanFilter = None,
         retail_chains: Chains = None,
         category: Category = None,
         limit: Limit = 20,
         offset: Offset = 0,
-    ) -> Page[ProductPrice]:
+    ) -> Page[Offer]:
+        if ean:
+            return repository.compare_by_barcode(ean, retail_chains, limit, offset)
+        if not query:
+            raise ToolError("Pass query or ean.")
         return repository.search(query, retail_chains, category, limit, offset)
-
-    @mcp.tool(
-        description="Find the same product (by EAN barcode) in all chains with price difference in RSD and %.",
-        annotations=READ_ONLY,
-    )
-    def compare_by_barcode(ean: Ean, limit: Limit = 20, offset: Offset = 0) -> Page[BarcodeOffer]:
-        return repository.compare_by_barcode(ean, limit, offset)
 
     @mcp.tool(
         description=(
