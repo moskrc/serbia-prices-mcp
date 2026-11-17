@@ -1,0 +1,39 @@
+[project]
+name = "serbia-prices-mcp"
+version = "0.1.0"
+description = "MCP server for grocery prices of the major Serbian retail chains from data.gov.rs open data, runs locally without keys"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+keywords = ["mcp", "serbia", "prices", "groceries", "open-data", "duckdb"]
+dependencies = [
+    "duckdb>=2.0",
+    "fastmcp>=4.2",
+    "httpx>=0.28",
+    "pydantic>=2.14",
+    "pydantic-settings>=2.16.3",
+]
+
+[project.scripts]
+serbia-prices-mcp = "serbia_prices_mcp.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+]
