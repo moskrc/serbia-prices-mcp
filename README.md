@@ -123,9 +123,16 @@ history and the discount check use those snapshots. The database takes about 50 
 
 ## Data
 
-The price lists are published by the retail chains on [data.gov.rs](https://data.gov.rs) under the Open Data
-License of the Republic of Serbia. Prices are shown as published and may differ in the store. This project is not
-affiliated with the chains or the portal.
+The price lists are published by the retail chains on [data.gov.rs](https://data.gov.rs) under the
+[Serbian Open Data License](https://data.gov.rs/sr/terms/). The server downloads them daily; every price carries
+`price_date`, the date of the chain's price list.
+
+Changes to the data: columns are mapped to one schema, invalid rows are skipped, promotional prices not below the
+regular price are dropped, text is cleaned and a search field without diacritics and Cyrillic is added. Units,
+unit prices, VAT rates and promotion start dates are not loaded.
+
+Prices are shown as published and may differ in the store. This project is not affiliated with the chains or the
+portal.
 
 ## Development
 
