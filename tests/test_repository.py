@@ -60,6 +60,19 @@ def test_search_ranks_by_relevance_then_package_price(
     assert [r.price for r in repository.search(["secer"]).items] == [1.19, 99.99, 3145.45]
 
 
+def test_search_folds_cyrillic_and_diacritics(
+    price_csv: Callable[..., Path], database: Path, repository: PriceRepository
+) -> None:
+    rows = [
+        "1;Млеко;МЛЕКО ЉУБИЧИЦА 2,8% 1Л;Њива;8600000000901;l;IDEA;16-11-2026;139.99;139.99;;;;20;VAZECI_CENOVNIK",
+        "1;Mleko;ĐUVEČ Džem Šećer;;8600000000902;kom;IDEA;16-11-2026;99.99;99.99;;;;20;VAZECI_CENOVNIK",
+    ]
+    build_database(database, {"idea": price_csv("idea.csv", rows)})
+
+    assert [r.ean for r in repository.search(["mleko ljubicica 2 8 njiva"]).items] == ["8600000000901"]
+    assert [r.ean for r in repository.search(["djuvec dzem secer"]).items] == ["8600000000902"]
+
+
 @pytest.mark.usefixtures("sample")
 def test_compare_by_barcode_cleans_quotes_nul_and_zero_promo(repository: PriceRepository) -> None:
     offers = repository.compare_by_barcode("8600000000101").items

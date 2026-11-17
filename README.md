@@ -100,9 +100,9 @@ All tools are read-only. Lists are paged with `limit` and `offset` and return `t
 
 1. For each chain the server asks the data.gov.rs API for the chain's datasets and takes the newest price list CSV.
 2. It downloads all files in parallel.
-3. One parser reads every file: it maps the column names to one schema, unifies units (`kom`, `kom.`, `KOM`),
-   validates prices and dates, skips invalid rows and prepares text for search without diacritics.
-4. The rows are loaded into a new DuckDB file, which then replaces the old one. If a chain fails to download or
+3. DuckDB reads each file with one SQL query: the header is mapped to one schema, prices and dates are
+   validated, invalid rows are skipped and names are prepared for search without diacritics and Cyrillic.
+4. The rows go into a new DuckDB file, which then replaces the old one. If a chain fails to download or
    parse, its previous prices are kept.
 5. Each tool call is one SQL query over the file, opened read-only. Queries take 30–100 ms.
 6. While running, the server checks every hour and downloads again when the data is older than 20 hours.
