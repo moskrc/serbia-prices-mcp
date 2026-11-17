@@ -1,5 +1,7 @@
 # serbia-prices-mcp
 
+<!-- mcp-name: io.github.moskrc/serbia-prices-mcp -->
+
 An MCP server for grocery prices in Serbia. It downloads the daily price lists that retail chains publish on
 [data.gov.rs](https://data.gov.rs), stores them in a local DuckDB file and lets an AI assistant search, compare
 and price a shopping list across chains.

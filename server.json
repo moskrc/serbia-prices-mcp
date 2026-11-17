@@ -1,0 +1,29 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.moskrc/serbia-prices-mcp",
+  "title": "Serbia Grocery Prices",
+  "description": "Grocery prices of Serbian retail chains from data.gov.rs open data.",
+  "repository": {
+    "url": "https://github.com/moskrc/serbia-prices-mcp",
+    "source": "github"
+  },
+  "version": "0.1.3",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "serbia-prices-mcp",
+      "version": "0.1.3",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SERBIA_PRICES_MCP_DATA_DIR",
+          "description": "Directory for the downloaded prices database",
+          "default": "~/.cache/serbia-prices-mcp"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 [project]
 name = "serbia-prices-mcp"
-version = "0.1.2"
+version = "0.1.3"
 description = "MCP server for grocery prices of the major Serbian retail chains from data.gov.rs open data"
 readme = "README.md"
 license = "MIT"
