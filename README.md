@@ -7,7 +7,7 @@ An MCP server for grocery prices in Serbia. It downloads the daily price lists t
 and price a shopping list across chains.
 
 Chains: Lidl, Maxi (also Mega Maxi, Shop&Go), Idea (also Mercator, Roda), Univerexport, Gomex, Aman, Metro, dm,
-Aroma, Svetofor and Veropoulos — the major chains in Belgrade and Novi Sad.
+Aroma, Svetofor and Veropoulos, the major chains in Belgrade and Novi Sad.
 
 It runs on your computer. There is no account, API key or hosted service.
 
@@ -15,12 +15,7 @@ It runs on your computer. There is no account, API key or hosted service.
 
 The chains publish their prices as open data, but in a form that is hard to use directly: one CSV per chain, each
 with its own column names, unit spellings and encoding problems. The portal has no search and no way to compare
-chains. This server normalizes the files into one table so the assistant can answer questions like:
-
-- Where is this product cheapest, and by how much?
-- Which store is cheapest for my shopping list?
-- Is this discount real, or was the regular price raised before it?
-- How has the price changed over the last months?
+chains. This server normalizes the files into one table.
 
 ## Example questions
 
@@ -128,8 +123,8 @@ The price lists are published by the retail chains on [data.gov.rs](https://data
 `price_date`, the date of the chain's price list.
 
 Changes to the data: columns are mapped to one schema, invalid rows are skipped, promotional prices not below the
-regular price are dropped, text is cleaned and a search field without diacritics and Cyrillic is added. Units,
-unit prices, VAT rates and promotion start dates are not loaded.
+regular price are dropped, a promotion past its end date is shown at the regular price, text is cleaned and a search
+field without diacritics and Cyrillic is added. Units, unit prices, VAT rates and promotion start dates are not loaded.
 
 Prices are shown as published and may differ in the store. This project is not affiliated with the chains or the
 portal.

@@ -15,7 +15,7 @@ STANDARD_HEADER = (
 DELHAIZE = [
     "15;Ulja i masti;Maslac 82% Lurpak 250g;Lurpak;8600000000101;kg;Maxi;16-11-2026;499.99;1999.96;;;;20;VAZECI_CENOVNIK",
     "15;Ulja i masti;Maslac 82% Lurpak 250g;Lurpak;8600000000101;kg;Mega Maxi;16-11-2026;479.99;1919.96;;;;20;VAZECI_CENOVNIK",
-    "11;Slatki konditori i cerealije;Keks sa maslacem 200g;Plazma;8600000000102;kg;Maxi;16-11-2026;149.99;749.95;;;;20;VAZECI_CENOVNIK",
+    "11;Slatki konditori i cerealije;Keks sa maslacem 200g;Plazma;8600000000102;kg;Maxi;16-11-2026;149.99;749.95;99.99;12-11-2026;15-11-2026;20;VAZECI_CENOVNIK",
     "8;Sveže i prerađeno meso;Pileci file 500g Sveze M;Sveze M;8600000000103;kg;Maxi;16-11-2026;449.99;449.99;;;;10;VAZECI_CENOVNIK",
     "1;Mleko, mlečni i mešoviti proizvodi, jaja;Jaja M 10/1;Farma;8600000000104;kom;Maxi;16-11-2026;249.99;24.99;;;;10;VAZECI_CENOVNIK",
     "15;Ulja i masti;Maslac 82% Lurpak 250g;Lurpak;8600000000101;kg;Maxi;01-09-2026;449.99;1799.96;;;;20;MESECNI_PRESEK",
@@ -23,10 +23,10 @@ DELHAIZE = [
 ]
 LIDL = [
     "8;Sveže i prerađeno meso;Pileći file MK12 ca. 1kg;Lidl;2000000000200;kg;Lidl Srbija KD;16-11-2026;779.99;779.99;;;;10;VAZECI_CENOVNIK",
-    "15;Ulja i masti;Maslac 82% Pilos 250g;Pilos;4056489000001;g;Lidl Srbija KD;16-11-2026;399.99;1599.96;299.99;12-11-2026;18-11-2026;20;VAZECI_CENOVNIK",
+    "15;Ulja i masti;Maslac 82% Pilos 250g;Pilos;4056489000001;g;Lidl Srbija KD;16-11-2026;399.99;1599.96;299.99;12-11-2026;31-12-2099;20;VAZECI_CENOVNIK",
     "1;Mleko, mlečni i mešoviti proizvodi, jaja;Jaja M 10 kom;Lidl;4056489000002;kom.;Lidl Srbija KD;16-11-2026;229.99;23.00;;;;10;VAZECI_CENOVNIK",
     "15;Ulja i masti;Maslac 82% Pilos 250g;Pilos;4056489000001;g;Lidl Srbija KD;01-10-2026;349.99;1399.96;;;;20;MESECNI_PRESEK",
-    "20;Papirna i kuhinjska galanterija;KESA ZA PEČENJE 8/1 FRESH PACK;FRESH&PACK;3850334609861;kom.;Lidl Srbija KD;16-11-2026;57.00;57.00;5.00;12-11-2026;08-12-2026;20;VAZECI_CENOVNIK",
+    "20;Papirna i kuhinjska galanterija;KESA ZA PEČENJE 8/1 FRESH PACK;FRESH&PACK;3850334609861;kom.;Lidl Srbija KD;16-11-2026;57.00;57.00;5.00;12-11-2026;31-12-2099;20;VAZECI_CENOVNIK",
 ]
 UNIVEREXPORT = [
     "﻿KATEGORIJA;NAZIV KATEGORIJE;Naziv proizvoda;Robna marka;Barkod proizvoda;Jedinica mere;Naziv trgovca – format;Datum cenovnika;Redovna cena;Cena po jedinici mere;Snižena cena;Datum početka sniženja;Datum kraja sniženja;Stopa PDV;VRSTA_CENOVNIKA",

@@ -95,7 +95,8 @@ def build_server(repository: PriceRepository, sync: PriceSync) -> FastMCP:
 
     @mcp.tool(
         description=(
-            "Current promotions with discount of at least min_discount_pct, as published by the chains. "
+            "Current promotions with discount of at least min_discount_pct, as published by the chains; "
+            "promotions past their promo_end are left out. "
             "regular_raised_before_promo=true means the regular price was raised compared to the monthly snapshots "
             "of recent months, so the discount may be inflated; false does NOT confirm the discount is real. "
             "needs_verification=true marks discounts of 80% or more: usually clearance of leftover stock or a data "

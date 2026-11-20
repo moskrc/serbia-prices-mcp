@@ -44,10 +44,19 @@ STORE_FORMATS = "list_sort(list(DISTINCT store_format)) AS store_formats"
 
 CHAIN_FILTER = "in_chains(concat_ws(' ', r.key, r.name, p.store_format), $chains)"
 
+PRICES = """(
+    SELECT * EXCLUDE (expired) REPLACE (
+        if(expired, NULL, promo_price) AS promo_price,
+        if(expired, NULL, promo_end) AS promo_end,
+        if(expired, regular_price, price) AS price
+    )
+    FROM (SELECT *, coalesce(snapshot = 'current' AND promo_end < current_date, false) AS expired FROM prices)
+)"""
+
 SEARCH_SQL = f"""
 WITH matched AS (
     SELECT p.*, list_max([relevance(p.search_text, v[1]) FOR v IN $variants]) AS relevant
-    FROM prices p JOIN retailers r ON r.key = p.retailer
+    FROM {PRICES} p JOIN retailers r ON r.key = p.retailer
     WHERE p.snapshot = 'current'
       AND list_bool_or([matches(p.search_text, v) FOR v IN $variants])
       AND {CHAIN_FILTER}
@@ -62,7 +71,7 @@ ORDER BY relevant DESC, price, retailer, name, ean
 
 COMPARE_SQL = f"""
 WITH matched AS (
-    SELECT p.* FROM prices p JOIN retailers r ON r.key = p.retailer
+    SELECT p.* FROM {PRICES} p JOIN retailers r ON r.key = p.retailer
     WHERE p.snapshot = 'current' AND p.ean = $ean AND {CHAIN_FILTER}
 ), grouped AS (
     SELECT {PRODUCT_COLUMNS}, {STORE_FORMATS} FROM matched GROUP BY ALL
@@ -75,7 +84,7 @@ FROM grouped ORDER BY price, retailer, store_formats, name
 
 HISTORY_SQL = f"""
 SELECT p.retailer, p.price_date, p.snapshot, p.regular_price, p.promo_price, p.price, {STORE_FORMATS}
-FROM prices p JOIN retailers r ON r.key = p.retailer
+FROM {PRICES} p JOIN retailers r ON r.key = p.retailer
 WHERE p.ean = $ean AND {CHAIN_FILTER}
 GROUP BY ALL
 ORDER BY p.retailer, store_formats, p.price_date, p.snapshot
@@ -91,7 +100,7 @@ WITH history AS (
            least(h.min_price, p.price) AS lowest_recent_price,
            coalesce(p.regular_price > h.min_regular * 1.02, false) AS regular_raised_before_promo,
            100 * (p.regular_price - p.promo_price) / p.regular_price >= 80 AS needs_verification
-    FROM prices p
+    FROM {PRICES} p
     JOIN retailers r ON r.key = p.retailer
     LEFT JOIN history h ON h.retailer = p.retailer AND h.store_format = p.store_format AND h.ean = p.ean
     WHERE p.snapshot = 'current' AND p.promo_price IS NOT NULL
@@ -118,7 +127,7 @@ WITH items AS (
     SELECT i.i, i.label, i.quantity, p.retailer, p.store_format, p.name, p.ean, p.price,
            CASE WHEN i.ean <> '' THEN 2 ELSE relevance(p.search_text, i.tokens[1]) END AS relevant
     FROM items i
-    JOIN prices p ON p.snapshot = 'current'
+    JOIN {PRICES} p ON p.snapshot = 'current'
         AND CASE WHEN i.ean <> '' THEN p.ean = i.ean ELSE matches(p.search_text, i.tokens) END
     JOIN retailers r ON r.key = p.retailer
     WHERE {CHAIN_FILTER}

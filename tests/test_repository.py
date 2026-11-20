@@ -169,10 +169,18 @@ def test_discounts_flag_regular_price_raised_before_promo(repository: PriceRepos
         "KESA ZA PEČENJE 8/1 FRESH PACK", 91.23, True
     )
     assert (discount.name, discount.discount_pct, discount.needs_verification) == ("Maslac 82% Pilos 250g", 25.0, False)
-    assert discount.promo_end == dt.date(2026, 11, 18)
+    assert discount.promo_end == dt.date(2099, 12, 31)
     assert discount.regular_raised_before_promo
     assert discount.lowest_recent_price == 299.99
     assert repository.top_discounts(min_discount_pct=95).items == []
+
+
+@pytest.mark.usefixtures("sample")
+def test_expired_promo_is_shown_at_regular_price(repository: PriceRepository) -> None:
+    (offer,) = repository.compare_by_barcode("8600000000102").items
+
+    assert (offer.price, offer.promo_price, offer.promo_end) == (149.99, None, None)
+    assert "8600000000102" not in [d.ean for d in repository.top_discounts(min_discount_pct=0).items]
 
 
 @pytest.mark.usefixtures("sample")
