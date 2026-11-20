@@ -7,7 +7,7 @@
     "url": "https://github.com/moskrc/serbia-prices-mcp",
     "source": "github"
   },
-  "version": "0.1.5",
+  "version": "0.1.6",
   "packages": [
     {
       "registryType": "pypi",
